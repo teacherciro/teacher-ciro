@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Ciro | Aula Paulo 19/05</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e14;--surface:#16161f;--surface2:#1e1e2a;
+  --border:rgba(255,255,255,0.08);--accent:#7c6fff;
+  --correct:#3ecf8e;--wrong:#ff6b6b;--text:#f0f0f5;--muted:#8888aa;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 4rem}
+.glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 20%,rgba(124,111,255,0.06),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(62,207,142,0.05),transparent 60%)}
+header{text-align:center;margin-bottom:1.8rem;position:relative;z-index:1}
+.badge{display:inline-block;background:rgba(124,111,255,0.15);border:1px solid rgba(124,111,255,0.3);color:#a99fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:99px;margin-bottom:12px}
+.dbadge{display:inline-block;background:rgba(62,207,142,0.1);border:1px solid rgba(62,207,142,0.25);color:#3ecf8e;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;margin-left:8px}
+h1{font-family:var(--fh);font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#fff 30%,#7c6fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{color:var(--muted);font-size:.88rem;margin-top:5px}
+.container{width:100%;max-width:560px;position:relative;z-index:1}
+.tabs{display:flex;margin-bottom:1.4rem;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.tab{flex:1;padding:11px;text-align:center;font-family:var(--fh);font-size:14px;font-weight:700;cursor:pointer;background:var(--surface);color:var(--muted);border:none;transition:all .2s}
+.tab.active{background:var(--accent);color:#fff}
+.tab.locked{cursor:not-allowed;opacity:.45}
+.tab small{font-size:10px;display:block;font-weight:400;margin-top:2px;opacity:.75}
+.scores{display:flex;gap:10px;margin-bottom:1rem;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px 14px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.chip strong{color:var(--text);font-family:var(--fh);font-size:14px}
+.chip.c{border-color:rgba(62,207,142,.3)}.chip.c strong{color:var(--correct)}
+.chip.w{border-color:rgba(255,107,107,.3)}.chip.w strong{color:var(--wrong)}
+.pbar{width:100%;height:3px;background:var(--border);border-radius:99px;margin-bottom:1.4rem;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--correct));border-radius:99px;transition:width .4s;width:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1rem;min-height:260px;display:flex;flex-direction:column;gap:1.2rem;animation:fi .35s ease}
+.word-area{text-align:center}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:12px}
+.tv{background:rgba(124,111,255,.15);color:#a99fff}
+.tg{background:rgba(255,107,107,.15);color:#ff9090}
+.word{font-family:var(--fh);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1.3}
+.blank{color:var(--accent);font-weight:700;border-bottom:2px solid var(--accent);padding:0 4px}
+.qtext{font-size:.88rem;color:var(--muted);margin-top:6px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 10px;font-size:14px;font-family:var(--fb);color:var(--text);cursor:pointer;transition:all .15s;text-align:center;line-height:1.3}
+.opt:hover:not(:disabled){border-color:rgba(124,111,255,.5);background:rgba(124,111,255,.1);transform:translateY(-1px)}
+.opt:disabled{cursor:default}
+.opt.correct{background:rgba(62,207,142,.15);border-color:var(--correct);color:var(--correct);font-weight:500}
+.opt.wrong{background:rgba(255,107,107,.1);border-color:var(--wrong);color:var(--wrong)}
+.fb{text-align:center;font-size:14px;padding:12px;border-radius:12px;display:none;animation:fi .3s ease;line-height:1.5}
+.fb.show{display:block}
+.fb.ok{background:rgba(62,207,142,.1);color:var(--correct);border:1px solid rgba(62,207,142,.2)}
+.fb.no{background:rgba(255,107,107,.1);color:var(--wrong);border:1px solid rgba(255,107,107,.2)}
+.nxt{width:100%;padding:15px;background:var(--accent);border:none;border-radius:14px;font-family:var(--fh);font-size:16px;font-weight:700;color:#fff;cursor:pointer;display:none;transition:opacity .2s,transform .15s}
+.nxt:hover{opacity:.88;transform:translateY(-1px)}
+.nxt.show{display:block;animation:fi .3s ease}
+.done{display:none;background:var(--surface);border:1px solid rgba(62,207,142,.3);border-radius:20px;padding:2.5rem 2rem;text-align:center;animation:fi .4s ease}
+.done.show{display:block}
+.done h2{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:var(--correct);margin-bottom:10px}
+.done p{color:var(--muted);margin-bottom:1.5rem;font-size:15px}
+.gobtn{display:inline-block;padding:13px 32px;background:var(--accent);border:none;border-radius:12px;font-family:var(--fh);font-size:16px;font-weight:700;color:#fff;cursor:pointer}
+.gobtn:hover{opacity:.85}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<header>
+  <div><span class="badge">Teacher Ciro esta de olho em voce</span><span class="dbadge">19/05</span></div>
+  <h1>Aula do Paulo</h1>
+  <p>Vocab &amp; Gramatica &middot; Sem desculpa, meu jovem!</p>
+</header>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" id="tv" onclick="switchPhase('vocab')">Vocabulario<small id="sv">da aula de hoje</small></button>
+    <button class="tab locked" id="tg" onclick="switchPhase('grammar')">Gramatica<small id="sg">complete vocab 1o</small></button>
+  </div>
+  <div class="scores">
+    <div class="chip c">+ <strong id="hits">0</strong> acertos</div>
+    <div class="chip w">x <strong id="misses">0</strong> erros</div>
+    <div class="chip">No <strong id="qnum">1</strong></div>
+  </div>
+  <div class="pbar"><div class="pfill" id="prog"></div></div>
+  <div class="done" id="done">
+    <h2>Fase concluida!</h2>
+    <p id="donemsg"></p>
+    <button class="gobtn" onclick="goGrammar()">Ir para Gramatica</button>
+  </div>
+  <div class="card" id="card">
+    <div class="word-area">
+      <div class="tag tv" id="ltag">Vocabulario</div>
+      <div class="word" id="word"></div>
+      <div class="qtext" id="qtext"></div>
+    </div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <button class="nxt" id="nxt" onclick="next()">Proxima</button>
+</div>
+<script>
+var vocab = [
+  {w:"Already",t:"Ja",o:["Ja","Ainda","Tambem","Sempre"],e:"Ex: I have already watched the movie."},
+  {w:"Still",t:"Ainda (afirmacao)",o:["Ainda (afirmacao)","Ja","Tambem","Nunca"],e:"'Still' vai no meio da frase em afirmacoes."},
+  {w:"Yet",t:"Ainda (negacao)",o:["Ainda (negacao)","Ja","Sempre","Talvez"],e:"'Yet' vai no final em negacoes. Ex: I don't know yet."},
+  {w:"Also",t:"Tambem (meio da frase)",o:["Tambem (meio da frase)","Tambem (final)","Ainda","Ja"],e:"Ex: I also don't like because of the road."},
+  {w:"Too",t:"Tambem (final da frase)",o:["Tambem (final da frase)","Tambem (meio)","Ainda","Ja"],e:"Ex: I like it too."},
+  {w:"Currently",t:"No momento / atualmente",o:["No momento / atualmente","Antigamente","Futuramente","Raramente"],e:"Ex: I am currently out of the office."},
+  {w:"Meantime",t:"Enquanto isso",o:["Enquanto isso","Depois","Antes","Durante"],e:"Ex: In the meantime, we can study."},
+  {w:"Hopefully",t:"Espero / tomara",o:["Espero / tomara","Felizmente","Infelizmente","Certamente"],e:"Ex: Hopefully, he will arrive on time."},
+  {w:"This",t:"Este / Esta (perto)",o:["Este / Esta (perto)","Aquele / Aquela","Estes / Estas","Aqueles / Aquelas"],e:"Singular, perto. Ex: This is my book."},
+  {w:"These",t:"Estes / Estas (plural, perto)",o:["Estes / Estas (plural, perto)","Este / Esta","Aquele / Aquela","Aqueles / Aquelas"],e:"Plural de 'this'. Ex: These answers are correct."},
+  {w:"That",t:"Aquele / Aquela (longe)",o:["Aquele / Aquela (longe)","Este / Esta","Estes / Estas","Aqueles / Aquelas"],e:"Singular, longe. Ex: That movie was great."},
+  {w:"Those",t:"Aqueles / Aquelas (plural, longe)",o:["Aqueles / Aquelas (plural, longe)","Aquele / Aquela","Este / Esta","Estes / Estas"],e:"Plural de 'that'. Ex: Those settings above."},
+  {w:"Above",t:"Acima",o:["Acima","Abaixo","Ao lado","Dentro"],e:"Ex: Based on those settings above."},
+  {w:"Thick",t:"Grosso / Espesso",o:["Grosso / Espesso","Fino","Largo","Alto"],e:"Ex: The thickness of the material."},
+  {w:"Either...or",t:"Ou...ou (escolha)",o:["Ou...ou (escolha)","Nem...nem","E...e","Se...entao"],e:"Ex: Either I stay home or I go to the gym."},
+  {w:"To assist",t:"Dar suporte / ajudar",o:["Dar suporte / ajudar","Assistir (filme)","Perguntar","Chegar"],e:"Cuidado: 'assist' nao e assistir filme. Ex: I am happy to assist."},
+  {w:"Hangout",t:"Ressaca",o:["Ressaca","Reuniao","Festa","Passeio"],e:"Giria para estar de ressaca."}
+];
+var grammar = [
+  {s:"I don't know ___ .",a:"yet",o:["yet","still","already","also"],t:"Yet / Still",e:"'Yet' vai no final de frases negativas e perguntas."},
+  {s:"She ___ watched the movie.",a:"already",o:["already","yet","still","also"],t:"Already",e:"'Already' indica que algo aconteceu antes do esperado."},
+  {s:"I ___ like to watch in Joaçaba.",a:"also",o:["also","too","yet","still"],t:"Also / Too",e:"'Also' vai no meio da frase, antes do verbo principal."},
+  {s:"I am ___ out of the office.",a:"currently",o:["currently","hopefully","still","already"],t:"Adverbios",e:"'Currently' vai com present continuous."},
+  {s:"___ , he will arrive on time.",a:"Hopefully",o:["Hopefully","Currently","Already","Still"],t:"Hopefully",e:"'Hopefully' no inicio expressa desejo ou expectativa."},
+  {s:"___ I stay home OR I go to the gym.",a:"Either",o:["Either","Neither","Both","Whether"],t:"Either...or",e:"'Either...or' apresenta duas opcoes possiveis."},
+  {s:"In ___ meantime, we can study.",a:"the",o:["the","a","this","that"],t:"Artigos",e:"'In the meantime' e uma expressao fixa com 'the'."},
+  {s:"___ answers clarify your questions.",a:"These",o:["These","Those","This","That"],t:"Demonstrativos",e:"'These' = plural, perto do falante."},
+  {s:"Based on ___ settings above...",a:"those",o:["those","these","this","that"],t:"Demonstrativos",e:"'Those' = plural, distante ou ja mencionado."},
+  {s:"Did she ___ the movie?",a:"like",o:["like","liked","likes","liking"],t:"Past Simple Question",e:"Apos 'did', o verbo volta para a forma base."},
+  {s:"We will watch ___ in the movies.",a:"it",o:["it","her","them","this"],t:"Pronomes",e:"'It' substitui 'the movie'. Ex: We will watch it."},
+  {s:"I am happy ___ assist.",a:"to",o:["to","for","of","in"],t:"Infinitivo",e:"Happy + to + infinitivo. Ex: happy to assist."},
+  {s:"My day ___ good.",a:"was",o:["was","is","were","been"],t:"Past Simple - to be",e:"'Was' e o passado de 'is/am' para I/he/she/it."},
+  {s:"I ___ Devil Wears Prada last weekend.",a:"watched",o:["watched","watch","watches","watching"],t:"Past Simple",e:"Verbos regulares no passado recebem '-ed'."},
+  {s:"Let me ___ on Google.",a:"check",o:["check","to check","checking","checked"],t:"Let me + verbo",e:"'Let me' e seguido de verbo no infinitivo sem 'to'."},
+  {s:"The number of points ___ on the sensor.",a:"depends",o:["depends","depend","depending","depended"],t:"3a pessoa singular",e:"Com sujeito singular usamos 'depends' com -s."}
+];
 
+var phase="vocab", pool=[], cur=null;
+var hits=0, misses=0, qnum=1, answered=false, vocabCount=0, vocabDone=false;
+var VOCAB_MIN=8;
+
+function shuffle(a){return a.slice().sort(function(){return Math.random()-.5})}
+
+function buildPool(){
+  pool=shuffle(phase==="vocab"?vocab:grammar);
+}
+
+function resetScore(){
+  hits=0;misses=0;qnum=1;answered=false;
+  document.getElementById("hits").textContent="0";
+  document.getElementById("misses").textContent="0";
+  document.getElementById("qnum").textContent="1";
+  document.getElementById("prog").style.width="0%";
+  document.getElementById("nxt").className="nxt";
+  document.getElementById("done").className="done";
+  document.getElementById("card").style.display="flex";
+  document.getElementById("fb").className="fb";
+}
+
+function switchPhase(p){
+  if(p==="grammar"&&!vocabDone)return;
+  phase=p;
+  document.getElementById("tv").className="tab"+(p==="vocab"?" active":"");
+  document.getElementById("tg").className="tab"+(p==="grammar"?" active":" locked");
+  resetScore();buildPool();next();
+}
+
+function goGrammar(){
+  vocabDone=true;
+  document.getElementById("tg").className="tab";
+  document.getElementById("sg").textContent="tempos, prep, pronomes";
+  switchPhase("grammar");
+}
+
+function next(){
+  answered=false;
+  document.getElementById("nxt").className="nxt";
+  document.getElementById("fb").className="fb";
+  document.getElementById("done").className="done";
+  document.getElementById("card").style.display="flex";
+  if(pool.length===0)buildPool();
+  cur=pool.pop();
+
+  var ltag=document.getElementById("ltag");
+  var wordEl=document.getElementById("word");
+  var qtextEl=document.getElementById("qtext");
+
+  if(phase==="vocab"){
+    ltag.textContent="Vocabulario - aula 19/05";
+    ltag.className="tag tv";
+    wordEl.textContent=cur.w;
+    qtextEl.textContent="Qual e a traducao?";
+  } else {
+    ltag.textContent="Gramatica - "+cur.t;
+    ltag.className="tag tg";
+    var parts=cur.s.split("___");
+    wordEl.innerHTML=parts[0]+'<span class="blank">___</span>'+(parts[1]||"");
+    qtextEl.textContent="Complete a frase corretamente:";
+  }
+
+  var opts=shuffle(phase==="vocab"?cur.o:cur.o);
+  var container=document.getElementById("opts");
+  container.innerHTML="";
+  for(var i=0;i<opts.length;i++){
+    (function(opt){
+      var btn=document.createElement("button");
+      btn.className="opt";
+      btn.textContent=opt;
+      btn.onclick=function(){handleAnswer(opt)};
+      container.appendChild(btn);
+    })(opts[i]);
+  }
+
+  var card=document.getElementById("card");
+  card.style.animation="none";
+  card.offsetHeight;
+  card.style.animation="fi .35s ease";
+}
+
+function handleAnswer(chosen){
+  if(answered)return;
+  answered=true;
+  var correct=phase==="vocab"?cur.t:cur.a;
+  var btns=document.querySelectorAll(".opt");
+  for(var i=0;i<btns.length;i++){
+    btns[i].disabled=true;
+    if(btns[i].textContent===correct)btns[i].classList.add("correct");
+  }
+  var fb=document.getElementById("fb");
+  if(chosen===correct){
+    hits++;
+    document.getElementById("hits").textContent=hits;
+    fb.textContent="Correto! "+cur.e;
+    fb.className="fb ok show";
+  } else {
+    misses++;
+    document.getElementById("misses").textContent=misses;
+    for(var i=0;i<btns.length;i++){
+      if(btns[i].textContent===chosen)btns[i].classList.add("wrong");
+    }
+    fb.textContent="Errou! Correto: '"+correct+"'. "+cur.e;
+    fb.className="fb no show";
+  }
+  var total=hits+misses;
+  document.getElementById("prog").style.width=Math.min(100,Math.round(hits/total*100))+"%";
+  qnum++;
+  document.getElementById("qnum").textContent=qnum;
+
+  if(phase==="vocab"){
+    vocabCount++;
+    if(vocabCount>=VOCAB_MIN){
+      setTimeout(function(){
+        document.getElementById("card").style.display="none";
+        document.getElementById("nxt").className="nxt";
+        var score=Math.round(hits/total*100);
+        document.getElementById("donemsg").textContent="Voce acertou "+hits+" de "+total+" palavras ("+score+"%). Hora da gramatica!";
+        document.getElementById("done").className="done show";
+      },700);
+      return;
+    }
+  }
+  document.getElementById("nxt").className="nxt show";
+}
+
+buildPool();
+next();
+</script>
+</body>
+</html>
